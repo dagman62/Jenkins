@@ -35,7 +35,7 @@ RUN apt-get purge -y --auto-remove \
   rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8080
-EXPOSE 80
+EXPOSE 50000
 
 USER jenkins
 
