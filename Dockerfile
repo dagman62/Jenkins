@@ -1,0 +1,42 @@
+FROM ubuntu
+
+ENV TC_VER 8.5.31
+ENV DOCKER_VER 18.03.1
+
+RUN apt-get -y update && \ 
+  apt-get -y install openjdk-8-jdk wget curl && \ 
+  wget http://www-us.apache.org/dist/tomcat/tomcat-8/v${TC_VER}/bin/apache-tomcat-${TC_VER}.tar.gz \
+  -O /tmp/tomcat.tar.gz && \
+  cd /tmp && tar xvfz tomcat.tar.gz && \
+  mv -f /tmp/apache-tomcat-${TC_VER} /usr/local && \
+  ln -s /usr/local/apache-tomcat-${TC_VER} /usr/local/tomcat && \
+  rm -rf /usr/local/tomcat/webapps/* && \
+  useradd -d /var/jenkins_home -s /bin/bash jenkins && \
+  mkdir /var/jenkins_home && \
+  chown -R jenkins:jenkins /var/jenkins_home && \
+  chown -R jenkins:jenkins /usr/local/apache-tomcat-${TC_VER} && \
+  mkdir -p /tmp/download && \
+  curl -L https://download.docker.com/linux/static/stable/`uname -m`/docker-${DOCKER_VER}-ce.tgz | \
+  tar -xz -C /tmp/download && \ 
+  rm -rf /tmp/download/docker/dockerd && \
+  mv /tmp/download/docker/docker* /usr/local/bin/ && \
+  rm -rf /tmp/download && \
+  groupadd -g 999 docker && \
+  usermod -aG staff,docker jenkins && \
+  wget https://updates.jenkins-ci.org/latest/jenkins.war \ 
+  -O /tmp/ROOT.war && \
+  mv /tmp/ROOT.war /usr/local/tomcat/webapps && \
+  rm -f /tmp/ROOT.war
+  
+
+RUN apt-get purge -y --auto-remove \
+  curl \
+  wget && \
+  rm -rf /var/lib/apt/lists/*
+
+EXPOSE 8080
+EXPOSE 80
+
+USER jenkins
+
+CMD /usr/local/tomcat/bin/catalina.sh run
