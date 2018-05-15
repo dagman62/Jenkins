@@ -10,7 +10,6 @@ RUN apt-get -y update && \
   cd /tmp && tar xvfz tomcat.tar.gz && \
   mv -f /tmp/apache-tomcat-${TC_VER} /usr/local && \
   ln -s /usr/local/apache-tomcat-${TC_VER} /usr/local/tomcat && \
-  rm -rf /usr/local/tomcat/webapps/* && \
   useradd -d /var/jenkins_home -s /bin/bash jenkins && \
   mkdir /var/jenkins_home && \
   chown -R jenkins:jenkins /var/jenkins_home && \
@@ -24,9 +23,9 @@ RUN apt-get -y update && \
   groupadd -g 999 docker && \
   usermod -aG staff,docker jenkins && \
   wget https://updates.jenkins-ci.org/latest/jenkins.war \ 
-  -O /tmp/ROOT.war && \
-  mv /tmp/ROOT.war /usr/local/tomcat/webapps && \
-  rm -f /tmp/ROOT.war
+  -O /tmp/jenkins.war && \
+  mv /tmp/jenkins.war /usr/local/tomcat/webapps && \
+  rm -f /tmp/jenkins.war
   
 
 RUN apt-get purge -y --auto-remove \
