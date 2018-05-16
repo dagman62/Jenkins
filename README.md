@@ -5,7 +5,7 @@ The Jenkins Continuous Integration and Delivery server.
 # Usage
 
 ```
-docker run -p 8080:8080 -p 50000:50000 dagman62/jenkins:2.122
+docker run -p 8080:8080 -p 50000:50000 dagman62/jenkins
 ```
 
 NOTE: read below the _build executors_ part for the role of the `50000` port mapping.
@@ -14,7 +14,7 @@ This will store the workspace in /var/jenkins_home. All Jenkins data lives in th
 You will probably want to make that an explicit volume so you can manage it and attach to another container for upgrades :
 
 ```
-docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home dagman62/jenkins:2.122
+docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home dagman62/jenkins
 ```
 
 this will automatically create a 'jenkins_home' [docker volume](https://docs.docker.com/storage/volumes/) on the host machine, that will survive the container stop/restart/deletion.
@@ -46,7 +46,7 @@ Jenkins.instance.setNumExecutors(5)
 and `Dockerfile`
 
 ```
-FROM dagman62/jenkins:2,122
+FROM dagman62/jenkins
 COPY executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 ```
 
@@ -65,7 +65,7 @@ You might need to customize the JVM running Jenkins, typically to pass system pr
 variable for this purpose :
 
 ```
-docker run --name myjenkins -p 8080:8080 -p 50000:50000 --env JAVA_OPTS=-Dhudson.footerURL=http://mycompany.com dagman62/jenkins:2.122
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 --env JAVA_OPTS=-Dhudson.footerURL=http://mycompany.com dagman62/jenkins
 ```
 
 # Configuring logging
@@ -92,7 +92,7 @@ If you want to install Jenkins behind a reverse proxy with prefix, example: mysi
 
 Argument you pass to docker running the jenkins image are passed to jenkins launcher, so you can run for sample :
 ```
-docker run dagman62/jenkins:2.122 --version
+docker run dagman62/jenkins --version
 ```
 This will dump Jenkins version, just like when you run jenkins as an executable war.
 
@@ -101,7 +101,7 @@ define a derived jenkins image based on the official one with some customized se
 to force use of HTTPS with a certificate included in the image
 
 ```
-FROM dagman62/jenkins:2.122
+FROM dagman62/jenkins
 
 COPY https.pem /var/lib/jenkins/cert
 COPY https.key /var/lib/jenkins/pk
@@ -112,12 +112,12 @@ EXPOSE 8083
 You can also change the default slave agent port for jenkins by defining `JENKINS_SLAVE_AGENT_PORT` in a sample Dockerfile.
 
 ```
-FROM dagman62/jenkins:2,122
+FROM dagman62/jenkins
 ENV JENKINS_SLAVE_AGENT_PORT 50001
 ```
 or as a parameter to docker,
 ```
-docker run --name myjenkins -p 8080:8080 -p 50001:50001 --env JENKINS_SLAVE_AGENT_PORT=50001 dagman62/jenkins:2.122
+docker run --name myjenkins -p 8080:8080 -p 50001:50001 --env JENKINS_SLAVE_AGENT_PORT=50001 dagman62/jenkins
 ```
 
 # Installing more tools
@@ -125,7 +125,7 @@ docker run --name myjenkins -p 8080:8080 -p 50001:50001 --env JENKINS_SLAVE_AGEN
 You can run your container as root - and install via apt-get, install as part of build steps via jenkins tool installers, or you can create your own Dockerfile to customise, for example:
 
 ```
-FROM dagman62/jenkins:2.122
+FROM dagman62/jenkins
 # if we want to install via apt
 USER root
 RUN apt-get update && apt-get install -y ruby make more-thing-here
@@ -138,7 +138,7 @@ For this purpose, use `/usr/share/jenkins/ref` as a place to define the default 
 wish the target installation to look like :
 
 ```
-FROM dagman62/jenkins:2.122
+FROM dagman62/jenkins
 COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
 ```
 
@@ -179,14 +179,14 @@ There are also custom version specifiers:
 You can run the script manually in Dockerfile:
 
 ```Dockerfile
-FROM dagman62/jenkins:2.122
+FROM dagman62/jenkins
 RUN /usr/local/bin/install-plugins.sh docker-slaves github-branch-source:1.8
 ```
 
 Furthermore it is possible to pass a file that contains this set of plugins (with or without line breaks).
 
 ```Dockerfile
-FROM dagman62/jenkins:2.122
+FROM dagman62/jenkins
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 ```
