@@ -9,13 +9,11 @@ ARG gid=1000
 ARG http_port=8080
 ARG agent_port=50000
 ARG JENKINS_HOME=/var/jenkins_home
-ARG DOCKER_VER=18.03.1
-ARG COMPOSE_VER=1.21.0
+ARG DOCKER_VER=18.05.0-ce
 
 ENV JENKINS_HOME $JENKINS_HOME
 ENV JENKINS_SLAVE_AGENT_PORT ${agent_port}
 ENV DOCKER_VER $DOCKER_VER
-ENV COMPOSE_VER $COMPOSE_VER
 
 # Jenkins is run with user `jenkins`, uid = 1000
 # If you bind mount a volume from the host or a data container,
@@ -64,10 +62,10 @@ ENV JENKINS_UC https://updates.jenkins.io
 ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
 RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 
-# lets install docker and docker-compose
+# lets install docker
 RUN ARCH=`uname -m` && \ 
  mkdir -p /tmp/download && \
- curl -L https://download.docker.com/linux/static/stable/${ARCH}/docker-${DOCKER_VER}-ce.tgz | tar -xz -C /tmp/download && \
+ curl -L https://download.docker.com/linux/static/edge/${ARCH}/docker-${DOCKER_VER}.tgz | tar -xz -C /tmp/download && \
  rm -rf /tmp/download/docker/dockerd && \
  mv /tmp/download/docker/docker* /usr/local/bin/ && \
  rm -rf /tmp/download && \
